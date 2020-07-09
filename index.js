@@ -13,6 +13,16 @@ $(document).ready(function(){
     appId: "1:459854653307:web:7a19cac4199c54955fbfde",
     measurementId: "G-4CT0EJLNZH"
   };
+
+  $('#message').keypress(function (e) {
+    var key = e.which;
+    if(key == 13)  // the enter key code
+     {
+      sendMessage();
+       return false;  
+     }
+   }); 
+
   // Initialize Firebase
   firebase.initializeApp(firebaseConfig);
   firebase.analytics();
@@ -26,8 +36,13 @@ $(document).ready(function(){
 	name=prompt("Enter your name");
 });
 
+ 
+
 function sendMessage(){
   let messsage=$('#message').val();
+  if(messsage.trim()==""){
+    return;
+  }
   let date=new Date();
 	firebase.database().ref(roomName).push().set({
 		"sender":name,
@@ -42,6 +57,12 @@ function sendMessage(){
   $('#message').val("")
 }
 
+function playSound(){
+  var aSound = document.createElement('audio');
+  aSound.setAttribute('src', 'audio/insight.mp3');
+  aSound.play();
+}
+
 function addMessage(snapshot){
   let hour=snapshot.val().hour%12;
   let min=snapshot.val().minute;
@@ -50,6 +71,11 @@ function addMessage(snapshot){
   let date=snapshot.val().date;
   let dateString=hour+":"+min+" "+ses+" | "+month+" "+date;
   let dateStringWithName=snapshot.val().sender+", "+dateString;
+
+  if(min==new Date().getMinutes()){
+    playSound();
+  }
+
   if(snapshot.val().sender!=name){
     html+='<div class="incoming_msg" id="'+snapshot.key+'">\
   <div class="incoming_msg_img"> <img src="https://ptetutorials.com/images/user-profile.png" alt="sunil"> </div>\
