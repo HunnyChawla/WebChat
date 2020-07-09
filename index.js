@@ -18,8 +18,7 @@ $(document).ready(function(){
     var key = e.which;
     if(key == 13)  // the enter key code
      {
-      sendMessage();
-       return false;  
+      sendMessage(); 
      }
    }); 
 
@@ -69,12 +68,17 @@ function addMessage(snapshot){
   let ses=snapshot.val().hour>=12?"PM":"AM";
   let month=monthArr[snapshot.val().month];
   let date=snapshot.val().date;
-  let dateString=hour+":"+min+" "+ses+" | "+month+" "+date;
-  let dateStringWithName=snapshot.val().sender+", "+dateString;
-
+  let dateString;
   if(min==new Date().getMinutes()){
     playSound();
   }
+  min=min<=9?"0"+min:min;
+  date=date<=9?"0"+date:date;
+  hour=hour<=9?"0"+hour:hour;
+  dateString=hour+":"+min+" "+ses+" | "+month+" "+date;
+  let dateStringWithName=snapshot.val().sender+", "+dateString;
+
+  
 
   if(snapshot.val().sender!=name){
     html+='<div class="incoming_msg" id="'+snapshot.key+'">\
@@ -102,5 +106,6 @@ function addMessage(snapshot){
   $("#recent-message").text(snapshot.val().message);
   $(".chat_date").text(dateString);
   $('#'+snapshot.key).focus();
+  $('#message').focus();
   console.log(snapshot);
 }
